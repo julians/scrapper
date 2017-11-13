@@ -1,9 +1,9 @@
-Converts and cleans the data from the spreadsheet
+Imports my text scraps
 
 
 # Installation
 
-You need at least Python 3.6 for this.
+Needs at least Python 3.6
 
 1. `python3 -m venv venv` (creates a new virtual environment)
 2. `source venv/bin/activate` (activates virtual environment)
@@ -12,6 +12,4 @@ You need at least Python 3.6 for this.
 
 # Usage
 
-1. Download spreadsheet csv data to `input_data.csv`
-2. Run `python convert.py`
-3. Voilà!
+Run `python run.py <path_to_files>`
