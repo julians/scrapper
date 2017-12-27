@@ -25,6 +25,7 @@ Saved on.*?((\d{2}\.\d{2}\.\d{4} \d{2}\:\d{2}.*?)
 at (.*$))""", re.IGNORECASE | re.MULTILINE)
 timezone_regex = re.compile("\((\S+?)\)")
 metadata_regex = re.compile("(?:\n\- .+?){1,}$", re.IGNORECASE | re.MULTILINE)
+metadata_item_regex =re.compile("^(\w+?):\s")
 
 
 def extract_date_and_place(original_chunk):
@@ -76,11 +77,16 @@ def parse_place(place_string):
 
     split_place = place_string.split(",")
     try:
-        return {
+        returnValue = {
             "coordinates": [float(coord) for coord in split_place]
         }
     except ValueError:
         return None
+
+    if returnValue["coordinates"][0] == 0 and returnValue["coordinates"][0] == 0:
+        return None
+
+    return returnValue
 
 
 def parse_metadata(original_string):
@@ -91,10 +97,40 @@ def parse_metadata(original_string):
     metadata_string = match.group(0)
     modified_string = original_string.replace(metadata_string, "")
 
+    metadata = metadata_string.splitlines()
+    metadata = [x.strip("- ") for x in metadata if len(x)]
+    metadata = organise_metadata(metadata)
+
     return {
-        "metadata": metadata_string,
+        "metadata": metadata,
         "modified": modified_string,
     }
+
+
+def organise_metadata(metadata):
+    organised_metadata = []
+    has_source = False
+
+    for index, item in enumerate(metadata):
+        metadata_item = {}
+        match = metadata_item_regex.search(item)
+        if not match:
+            metadata_item["content"] = item
+
+            if not has_source:
+                metadata_item["kind"] = "source"
+                has_source = True
+
+            organised_metadata.append(metadata_item)
+            continue
+
+        split_metadata = item.split(": ", 1)
+        organised_metadata.append({
+            "kind": split_metadata[0].strip(),
+            "content": split_metadata[1].strip()
+        })
+
+    return organised_metadata
 
 
 def create_item_from_string(item_string):
