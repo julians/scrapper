@@ -19,4 +19,5 @@ def file_import(directory_name):
 
 
 if __name__ == "__main__":
+    # pylint: disable=no-value-for-parameter
     file_import()
