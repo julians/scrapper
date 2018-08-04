@@ -8,6 +8,7 @@ import arrow
 from config import PLACES as PLACES_CONF
 from config import TIMEZONES as TIMEZONES_CONF
 
+
 class Item:
     def __init__(self, text, metadata=None, datetime=None, place=None):
         self.text = text
@@ -20,12 +21,15 @@ PREDEFINED_PLACES = [key for key, value in PLACES_CONF.items()]
 PREDEFINED_TIMEZONES = [key for key, value in TIMEZONES_CONF.items()]
 datetime_strings = defaultdict(int)
 
-date_and_place_regex = re.compile("""---
+date_and_place_regex = re.compile(
+    """---
 Saved on.*?((\d{2}\.\d{2}\.\d{4} \d{2}\:\d{2}.*?)
-at (.*$))""", re.IGNORECASE | re.MULTILINE)
+at (.*$))""",
+    re.IGNORECASE | re.MULTILINE,
+)
 timezone_regex = re.compile("\((\S+?)\)")
 metadata_regex = re.compile("(?:\n\- .+?){1,}$", re.IGNORECASE | re.MULTILINE)
-metadata_item_regex =re.compile("^(\w+?):\s")
+metadata_item_regex = re.compile("^(\w+?):\s")
 
 
 def extract_date_and_place(original_chunk):
@@ -58,9 +62,10 @@ def parse_datetime(datetime_string):
             timezone_string = TIMEZONES_CONF[timezone_string]
 
     try:
-        datetime = arrow.get(datetime_string, 'DD.MM.YYYY HH:mm:ss')
+        datetime = arrow.get(datetime_string, "DD.MM.YYYY HH:mm:ss")
     except arrow.parser.ParserError:
-        datetime = arrow.get(datetime_string, 'DD.MM.YYYY HH:mm')
+        datetime = arrow.get(datetime_string, "DD.MM.YYYY HH:mm")
+
     datetime = datetime.replace(tzinfo=timezone_string)
 
     return datetime.datetime
@@ -77,9 +82,7 @@ def parse_place(place_string):
 
     split_place = place_string.split(",")
     try:
-        returnValue = {
-            "coordinates": [float(coord) for coord in split_place]
-        }
+        returnValue = {"coordinates": [float(coord) for coord in split_place]}
     except ValueError:
         return None
 
@@ -101,10 +104,7 @@ def parse_metadata(original_string):
     metadata = [x.strip("- ") for x in metadata if len(x)]
     metadata = organise_metadata(metadata)
 
-    return {
-        "metadata": metadata,
-        "modified": modified_string,
-    }
+    return {"metadata": metadata, "modified": modified_string}
 
 
 def organise_metadata(metadata):
@@ -125,10 +125,9 @@ def organise_metadata(metadata):
             continue
 
         split_metadata = item.split(": ", 1)
-        organised_metadata.append({
-            "kind": split_metadata[0].strip(),
-            "content": split_metadata[1].strip()
-        })
+        organised_metadata.append(
+            {"kind": split_metadata[0].strip(), "content": split_metadata[1].strip()}
+        )
 
     return organised_metadata
 

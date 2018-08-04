@@ -16,6 +16,7 @@ def match_to_bucket(filepath):
         if bucket["filename_pattern"].search(os.path.basename(filepath)):
             return bucket["id"]
             break
+
     return False
 
 
@@ -25,13 +26,17 @@ def get_id_for_item(item):
 
 def split_file_into_chunks(filepath):
     with open(filepath, "r") as input_file:
-         content = input_file.read()
-         return content.split("------")
+        content = input_file.read()
+        return content.split("------")
 
 
 def get_files_by_bucket(directory_name):
-    buckets = {bucket["id"]: {"id": bucket["id"], "filepaths": []} for bucket in BUCKET_CONF}
-    for filepath in glob.iglob(os.path.join(directory_name, '**/*.txt'), recursive=True):
+    buckets = {
+        bucket["id"]: {"id": bucket["id"], "filepaths": []} for bucket in BUCKET_CONF
+    }
+    for filepath in glob.iglob(
+        os.path.join(directory_name, "**/*.txt"), recursive=True
+    ):
         bucket = match_to_bucket(filepath)
         if bucket:
             buckets[bucket]["filepaths"].append(filepath)
