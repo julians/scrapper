@@ -13,3 +13,5 @@ Needs at least Python 3.6
 # Usage
 
 Run `python run.py <path_to_files>`
+
+Run `FLASK_APP=server.py FLASK_DEBUG=1 python -m flask run`

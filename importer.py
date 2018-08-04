@@ -8,7 +8,7 @@ import re
 from collections import defaultdict
 
 from config import BUCKETS as BUCKET_CONF
-from item import Item, create_item_from_string
+from item import create_item_from_string
 
 
 def match_to_bucket(filepath):

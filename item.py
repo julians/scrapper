@@ -9,12 +9,12 @@ from config import PLACES as PLACES_CONF
 from config import TIMEZONES as TIMEZONES_CONF
 
 
-class Item:
-    def __init__(self, text, metadata=None, datetime=None, place=None):
-        self.text = text
-        self.datetime = datetime
-        self.place = place
-        self.metadata = metadata
+# class Item:
+#     def __init__(self, text, metadata=None, datetime=None, place=None):
+#         self.text = text
+#         self.datetime = datetime
+#         self.place = place
+#         self.metadata = metadata
 
 
 PREDEFINED_PLACES = [key for key, value in PLACES_CONF.items()]
@@ -147,4 +147,5 @@ def create_item_from_string(item_string):
         "place": date_and_place["place"],
         "metadata": metadata["metadata"],
     }
-    return Item(**item_arguments)
+    return item_arguments
+    # return Item(**item_arguments)
