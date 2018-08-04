@@ -15,7 +15,6 @@ def match_to_bucket(filepath):
     for bucket in BUCKET_CONF:
         if bucket["filename_pattern"].search(os.path.basename(filepath)):
             return bucket["id"]
-            break
 
     return False
 
@@ -55,7 +54,7 @@ def parse_chunks_into_items(chunks):
 
 def import_files(directory_name):
     buckets = get_files_by_bucket(directory_name)
-    for bucket_id, bucket in buckets.items():
+    for _, bucket in buckets.items():
         bucket["items"] = []
         for filepath in bucket["filepaths"]:
             chunks = split_file_into_chunks(filepath)

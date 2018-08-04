@@ -22,14 +22,14 @@ PREDEFINED_TIMEZONES = [key for key, value in TIMEZONES_CONF.items()]
 datetime_strings = defaultdict(int)
 
 date_and_place_regex = re.compile(
-    """---
+    r"""---
 Saved on.*?((\d{2}\.\d{2}\.\d{4} \d{2}\:\d{2}.*?)
 at (.*$))""",
     re.IGNORECASE | re.MULTILINE,
 )
-timezone_regex = re.compile("\((\S+?)\)")
-metadata_regex = re.compile("(?:\n\- .+?){1,}$", re.IGNORECASE | re.MULTILINE)
-metadata_item_regex = re.compile("^(\w+?):\s")
+timezone_regex = re.compile(r"\((\S+?)\)")
+metadata_regex = re.compile(r"(?:\n\- .+?){1,}$", re.IGNORECASE | re.MULTILINE)
+metadata_item_regex = re.compile(r"^(\w+?):\s")
 
 
 def extract_date_and_place(original_chunk):
@@ -82,7 +82,7 @@ def parse_place(place_string):
 
     split_place = place_string.split(",")
     try:
-        returnValue = {"coordinates": [float(coord) for coord in split_place]}
+        returnValue = {"coordinates": tuple([float(coord) for coord in split_place])}
     except ValueError:
         return None
 
@@ -111,7 +111,7 @@ def organise_metadata(metadata):
     organised_metadata = []
     has_source = False
 
-    for index, item in enumerate(metadata):
+    for _, item in enumerate(metadata):
         metadata_item = {}
         match = metadata_item_regex.search(item)
         if not match:
