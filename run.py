@@ -15,7 +15,7 @@ date_handler = lambda obj: (
 @click.argument("directory_name")
 def file_import(directory_name):
     buckets = importer.import_files(directory_name)
-    print(json.dumps(buckets, default=date_handler))
+    print(json.dumps(buckets, default=date_handler, indent=4))
     # for _, bucket in buckets.items():
     #     if len(bucket["items"]):
     #         # click.echo(bucket_id)

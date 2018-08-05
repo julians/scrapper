@@ -4,6 +4,7 @@
 import re
 from collections import defaultdict
 import arrow
+from urllib.parse import urlparse
 
 from config import PLACES as PLACES_CONF
 from config import TIMEZONES as TIMEZONES_CONF
@@ -30,6 +31,10 @@ at (.*$))""",
 timezone_regex = re.compile(r"\((\S+?)\)")
 metadata_regex = re.compile(r"(?:\n\- .+?){1,}$", re.IGNORECASE | re.MULTILINE)
 metadata_item_regex = re.compile(r"^(\w+?):\s")
+old_twitter_metadata_regex = re.compile(r"^(@\w+):")
+
+is_tag_line_regex = re.compile(r"^#\w+")
+match_tags_regex = re.compile(r"#(\w+)\b")
 
 
 def extract_date_and_place(original_chunk):
@@ -95,6 +100,20 @@ def parse_place(place_string):
 def parse_metadata(original_string):
     match = metadata_regex.search(original_string)
     if not match:
+        # special case for earliest saved tweets
+        old_twitter_metadata = old_twitter_metadata_regex.search(original_string)
+        if old_twitter_metadata:
+            metadata = {
+                "metadata": [
+                    {
+                        "kind": "source",
+                        "content": "{}".format(old_twitter_metadata.group(1)),
+                    }
+                ],
+                "modified": original_string.replace(old_twitter_metadata.group(0), ""),
+            }
+            return metadata
+
         return None
 
     metadata_string = match.group(0)
@@ -107,6 +126,20 @@ def parse_metadata(original_string):
     return {"metadata": metadata, "modified": modified_string}
 
 
+def check_and_handle_url(metadata_item):
+    parsed_url = urlparse(metadata_item["content"])
+
+    if parsed_url.netloc and parsed_url.scheme:
+        metadata_item["url"] = True
+
+        if parsed_url.netloc == "twitter.com":
+            metadata_item["url_name"] = "@{}".format(parsed_url.path.split("/")[1])
+        else:
+            metadata_item["url_name"] = parsed_url.netloc
+
+    return metadata_item
+
+
 def organise_metadata(metadata):
     organised_metadata = []
     has_source = False
@@ -115,19 +148,31 @@ def organise_metadata(metadata):
         metadata_item = {}
         match = metadata_item_regex.search(item)
         if not match:
-            metadata_item["content"] = item
+            is_tag_line = is_tag_line_regex.search(item)
+            if is_tag_line:
+                tags = match_tags_regex.findall(item)
+                for tag in tags:
+                    organised_metadata.append({"content": tag, "kind": "tag"})
+                continue
+            else:
+                metadata_item["content"] = item
 
-            if not has_source:
-                metadata_item["kind"] = "source"
-                has_source = True
+                if not has_source:
+                    metadata_item["kind"] = "source"
+                    has_source = True
 
-            organised_metadata.append(metadata_item)
-            continue
+                metadata_item = check_and_handle_url(metadata_item)
+
+                organised_metadata.append(metadata_item)
+                continue
 
         split_metadata = item.split(": ", 1)
-        organised_metadata.append(
-            {"kind": split_metadata[0].strip(), "content": split_metadata[1].strip()}
-        )
+        metadata_item = {
+            "kind": split_metadata[0].strip(),
+            "content": split_metadata[1].strip(),
+        }
+        metadata_item = check_and_handle_url(metadata_item)
+        organised_metadata.append(metadata_item)
 
     return organised_metadata
 
@@ -138,14 +183,18 @@ def create_item_from_string(item_string):
         return None
 
     metadata = parse_metadata(date_and_place["modified"])
-    if not metadata:
-        return None
+
+    if metadata:
+        text = metadata["modified"].strip()
+        metadata = metadata["metadata"]
+    else:
+        text = date_and_place["modified"].strip()
 
     item_arguments = {
-        "text": metadata["modified"],
+        "text": text,
         "datetime": date_and_place["datetime"],
         "place": date_and_place["place"],
-        "metadata": metadata["metadata"],
+        "metadata": metadata,
     }
     return item_arguments
     # return Item(**item_arguments)
