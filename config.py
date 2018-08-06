@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+from peewee import SqliteDatabase
 
 BUCKETS = [
     {
@@ -18,3 +19,5 @@ BUCKETS = [
 PLACES = {"WG": [52.396301, 13.032333]}
 
 TIMEZONES = {"CDT": "CST6CDT"}
+
+db = SqliteDatabase("scraps.db")

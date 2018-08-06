@@ -1,0 +1,17 @@
+<!doctype html>
+<head>
+    <title>Random Scrap</title>
+</head>
+<body>
+    {{ text }}
+    {{ created_at }}
+    {% if metadata %}
+        <ul>
+        {% for item in metadata %}
+            <li>
+                {{ item.content }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</body>
