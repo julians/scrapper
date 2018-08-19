@@ -32,6 +32,7 @@ class Item(BaseModel):
     lat = FloatField(null=True)
     lng = FloatField(null=True)
     language = CharField(max_length=5, null=True)
+    bucket = CharField(max_length=16, null=True)
 
 
 class ItemMetadata(BaseModel):

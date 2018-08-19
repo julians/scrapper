@@ -15,7 +15,7 @@ date_handler = lambda obj: (
 
 
 @db.atomic()
-def save_item_to_db(item):
+def save_item_to_db(item, bucket=None):
     lat = None
     lng = None
     if item["place"] and item["place"]["coordinates"]:
@@ -28,6 +28,7 @@ def save_item_to_db(item):
         lat=lat,
         lng=lng,
         language=item["language"],
+        bucket=bucket,
     )
 
     if item["metadata"]:
@@ -44,14 +45,16 @@ def file_import(directory_name):
     # with open("test_out.json", "w") as test_output_file:
     #     json.dump(buckets, test_output_file, default=date_handler, indent=4)
 
-    all_items = list(chain.from_iterable([x["items"] for x in buckets.values()]))
+    # all_items = list(chain.from_iterable([x["items"] for x in buckets.values()]))
 
     db.connect()
     db.drop_tables([Item, Metadata, ItemMetadata])
     db.create_tables([Item, Metadata, ItemMetadata])
 
-    for item in all_items:
-        save_item_to_db(item)
+    for bucket in buckets.values():
+        bucket_id = bucket["id"][:-1]
+        for item in bucket["items"]:
+            save_item_to_db(item, bucket=bucket_id)
 
     db.close()
 

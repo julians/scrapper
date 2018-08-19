@@ -106,3 +106,4 @@ ENV/
 .mypy_cache/
 
 scraps.db
+scraps.db-journal
