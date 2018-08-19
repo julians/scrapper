@@ -1,18 +1,48 @@
 <!doctype html>
 <head>
     <title>Random Scrap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css" />
 </head>
 <body>
-    {{ text }}
-    {{ created_at }}
-    {{ language }}
-    {% if metadata %}
-        <ul>
-        {% for item in metadata %}
-            <li>
-                {{ item.content }}
-            </li>
-        {% endfor %}
-        </ul>
-    {% endif %}
+    <article>
+        <section>
+            <p class="bucket bucket--{{ bucket }}">
+                {{ bucket }}
+            </p>
+            <p class="date">
+                {{ created_at.humanize(locale="de") }}
+                <br>
+                {{ created_at.format("dddd, D. MMMM YYYY", locale="de") }}
+                <br>
+                {{ created_at.format("H:mm", locale="de") }} Uhr
+            </p>
+            <div class="content content--{{ bucket }}">
+                {{ text }}
+            </div>
+            {% if metadata %}
+                <ul class="meta-items">
+                {% for item in metadata %}
+                    <li class="meta-item{% if item.kind %} meta-item--{{ item.kind }}{% endif %}">
+                        {% if item.url %}
+                            <a href="{{ item.url }}">
+                                {% if item.url_name %}
+                                    {{ item.url_name }}
+                                {% else %}
+                                    {{ item.content }}
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            {% if item.kind == "tag" %}#{% endif %}{{ item.content }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </section>
+    </article>
+    <script>
+        window.setTimeout(function () {
+            location.reload();
+        }, 3000)
+    </script>
 </body>

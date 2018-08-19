@@ -4,6 +4,7 @@ from peewee import fn
 from config import db
 import mistune
 from smartquotes import smartyPants
+import arrow
 
 
 app = Flask(__name__)
@@ -40,8 +41,9 @@ def random():
 
     return render_template(
         "random_scrap.jinja2",
+        bucket=random_scrap.bucket,
         text=markdown(text),
-        created_at=random_scrap.created_at,
+        created_at=arrow.get(random_scrap.created_at),
         metadata=metadata,
         language=random_scrap.language,
     )
