@@ -5,6 +5,18 @@ from config import db
 import mistune
 from smartquotes import smartyPants
 import arrow
+import re
+
+
+apostrophe_regex = re.compile(r"(\S)'(\S)")
+dash_regex = re.compile(r" - ")
+
+
+def fix_typography(string_to_format, language):
+    formatted_string = dash_regex.sub(r" – ", string_to_format)
+    formatted_string = apostrophe_regex.sub(r"\1’\2", formatted_string)
+    formatted_string = smartyPants(formatted_string, language=language)
+    return formatted_string
 
 
 app = Flask(__name__)
@@ -37,7 +49,7 @@ def random():
     typographic_language = typographic_languages.get(
         random_scrap.language, random_scrap.language
     )
-    text = smartyPants(random_scrap.text, language=typographic_language)
+    text = fix_typography(random_scrap.text, language=typographic_language)
 
     return render_template(
         "random_scrap.jinja2",
