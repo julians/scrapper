@@ -31,6 +31,7 @@ class Item(BaseModel):
     created_at = DateTimeField(null=True)
     lat = FloatField(null=True)
     lng = FloatField(null=True)
+    language = CharField(max_length=5, null=True)
 
 
 class ItemMetadata(BaseModel):

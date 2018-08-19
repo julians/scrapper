@@ -36,6 +36,7 @@ def random():
         text=markdown(random_scrap.text),
         created_at=random_scrap.created_at,
         metadata=metadata,
+        language=random_scrap.language,
     )
 
 

@@ -5,6 +5,7 @@ import re
 from collections import defaultdict
 import arrow
 from urllib.parse import urlparse
+from langdetect import detect
 
 from config import PLACES as PLACES_CONF
 from config import TIMEZONES as TIMEZONES_CONF
@@ -190,11 +191,14 @@ def create_item_from_string(item_string):
     else:
         text = date_and_place["modified"].strip()
 
+    language = detect(text)
+
     item_arguments = {
         "text": text,
         "datetime": date_and_place["datetime"],
         "place": date_and_place["place"],
         "metadata": metadata,
+        "language": language,
     }
     return item_arguments
     # return Item(**item_arguments)

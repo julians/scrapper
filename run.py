@@ -23,7 +23,11 @@ def save_item_to_db(item):
         lng = item["place"]["coordinates"][1]
 
     saved_item = Item.create(
-        text=item["text"], created_at=item["datetime"], lat=lat, lng=lng
+        text=item["text"],
+        created_at=item["datetime"],
+        lat=lat,
+        lng=lng,
+        language=item["language"],
     )
 
     if item["metadata"]:
