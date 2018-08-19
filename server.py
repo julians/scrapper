@@ -3,6 +3,7 @@ from models import Item, Metadata, ItemMetadata
 from peewee import fn
 from config import db
 import mistune
+from smartquotes import smartyPants
 
 
 app = Flask(__name__)
@@ -31,9 +32,15 @@ def random():
     )
     metadata = [x for x in metadata_query]
 
+    typographic_languages = {"de": "de-x-altquot"}
+    typographic_language = typographic_languages.get(
+        random_scrap.language, random_scrap.language
+    )
+    text = smartyPants(random_scrap.text, language=typographic_language)
+
     return render_template(
         "random_scrap.jinja2",
-        text=markdown(random_scrap.text),
+        text=markdown(text),
         created_at=random_scrap.created_at,
         metadata=metadata,
         language=random_scrap.language,
