@@ -51,6 +51,9 @@
     .bucket--poem {
         color: #00cbdb;
     }
+    .bucket a {
+        text-decoration: none;
+    }
     .date {
         margin-top: 0;
         color: #999;
@@ -114,7 +117,7 @@
     <article>
         <section>
             <p class="bucket bucket--{{ bucket }}">
-                {{ bucket }}
+                <a href="/view/{{ id }}">{{ bucket }} #{{ id }}</a>
             </p>
             <p class="date">
                 {{ created_at.humanize(locale="de") }}
