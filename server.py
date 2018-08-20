@@ -15,6 +15,20 @@ def get_metadata(item):
     return metadata
 
 
+def render_item(item):
+    metadata = get_metadata(item)
+
+    return render_template(
+        "detail.jinja2",
+        bucket=item.bucket,
+        text=markdown(item.get_typographic_text()),
+        created_at=arrow.get(item.created_at),
+        metadata=metadata,
+        language=item.language,
+        id=item.id,
+    )
+
+
 app = Flask(__name__)
 renderer = mistune.Renderer(hard_wrap=True)
 markdown = mistune.Markdown(renderer=renderer)
@@ -31,23 +45,24 @@ def index():
 
 
 @app.route("/random")
-@app.route("/view/<int:item_id>")
-def random(item_id=None):
-    if item_id:
-        item = Item.select().where(Item.id == item_id).get()
-    else:
-        item = Item.select().order_by(fn.Random()).get()
-    metadata = get_metadata(item)
+def random():
+    item = Item.select().order_by(fn.Random()).get()
 
-    return render_template(
-        "detail.jinja2",
-        bucket=item.bucket,
-        text=markdown(item.get_typographic_text()),
-        created_at=arrow.get(item.created_at),
-        metadata=metadata,
-        language=item.language,
-        id=item.id,
-    )
+    return render_item(item)
+
+
+@app.route("/random/<bucket>")
+def random_type(bucket):
+    item = Item.select().where(Item.bucket == bucket).order_by(fn.Random()).get()
+
+    return render_item(item)
+
+
+@app.route("/view/<int:item_id>")
+def view(item_id):
+    item = Item.select().where(Item.id == item_id).get()
+
+    return render_item(item)
 
 
 # @app.route("/view/<int:item_id>")

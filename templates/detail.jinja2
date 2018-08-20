@@ -71,6 +71,9 @@
     .content--poem {
         font-size: 1.25rem;
     }
+    .content--poem h1 em:first-child {
+        color: #aaa;
+    }
     .meta-items {
         padding: 0;
     }
@@ -117,7 +120,7 @@
     <article>
         <section>
             <p class="bucket bucket--{{ bucket }}">
-                <a href="/view/{{ id }}">{{ bucket }} #{{ id }}</a>
+                <a href="/random/{{ bucket }}">{{ bucket }}</a> <a href="/view/{{ id }}">#{{ id }}</a>
             </p>
             <p class="date">
                 {{ created_at.humanize(locale="de") }}
