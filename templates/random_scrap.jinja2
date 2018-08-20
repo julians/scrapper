@@ -131,7 +131,7 @@
                 {% for item in metadata %}
                     <li class="meta-item{% if item.kind %} meta-item--{{ item.kind }}{% endif %}">
                         {% if item.url %}
-                            <a href="{{ item.url }}">
+                            <a href="{{ item.content }}">
                                 {% if item.url_name %}
                                     {{ item.url_name }}
                                 {% else %}
