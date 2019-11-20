@@ -5,6 +5,8 @@ from config import db
 import arrow
 import mistune
 import arrow
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 def get_metadata(item):
@@ -32,8 +34,18 @@ def render_item(item, force_random_bucket=None):
 
 
 application = Flask(__name__)
+auth = HTTPBasicAuth()
 renderer = mistune.Renderer(hard_wrap=True)
 markdown = mistune.Markdown(renderer=renderer)
+
+users = {"julian": generate_password_hash("pomepomepome")}
+
+
+@auth.verify_password
+def verify_password(username, password):
+    if username in users:
+        return check_password_hash(users.get(username), password)
+    return False
 
 
 @application.before_request
@@ -47,6 +59,7 @@ def index():
 
 
 @application.route("/random")
+@auth.login_required
 def random():
     item = Item.select().order_by(fn.Random()).get()
 
@@ -54,6 +67,7 @@ def random():
 
 
 @application.route("/random/<bucket>")
+@auth.login_required
 def random_type(bucket):
     item = Item.select().where(Item.bucket == bucket).order_by(fn.Random()).get()
 
@@ -61,6 +75,7 @@ def random_type(bucket):
 
 
 @application.route("/view/<int:item_id>")
+@auth.login_required
 def view(item_id):
     item = Item.select().where(Item.id == item_id).get()
 
