@@ -29,43 +29,43 @@ def render_item(item):
     )
 
 
-app = Flask(__name__)
+application = Flask(__name__)
 renderer = mistune.Renderer(hard_wrap=True)
 markdown = mistune.Markdown(renderer=renderer)
 
 
-@app.before_request
+@application.before_request
 def _db_connect():
     db.connect()
 
 
-@app.route("/")
+@application.route("/")
 def index():
     return "hello"
 
 
-@app.route("/random")
+@application.route("/random")
 def random():
     item = Item.select().order_by(fn.Random()).get()
 
     return render_item(item)
 
 
-@app.route("/random/<bucket>")
+@application.route("/random/<bucket>")
 def random_type(bucket):
     item = Item.select().where(Item.bucket == bucket).order_by(fn.Random()).get()
 
     return render_item(item)
 
 
-@app.route("/view/<int:item_id>")
+@application.route("/view/<int:item_id>")
 def view(item_id):
     item = Item.select().where(Item.id == item_id).get()
 
     return render_item(item)
 
 
-# @app.route("/view/<int:item_id>")
+# @application.route("/view/<int:item_id>")
 # def view(item_id):
 #     item = Item.select().where(Item.id == item_id)
 #     metadata = get_metadata(item)
@@ -74,7 +74,12 @@ def view(item_id):
 #         return "404"
 
 
-@app.teardown_request
+@application.teardown_request
 def _db_close(exc):
     if not db.is_closed():
         db.close()
+
+
+if __name__ == "__main__":
+    application.run(host="0.0.0.0")
+

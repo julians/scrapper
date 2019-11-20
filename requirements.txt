@@ -20,5 +20,6 @@ six==1.11.0
 toml==0.9.4
 typed-ast==1.1.0
 typing==3.6.4
+uWSGI==2.0.18
 Werkzeug==0.15.3
 wrapt==1.10.11
