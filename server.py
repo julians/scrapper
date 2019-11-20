@@ -15,7 +15,7 @@ def get_metadata(item):
     return metadata
 
 
-def render_item(item):
+def render_item(item, force_random_bucket=None):
     metadata = get_metadata(item)
 
     return render_template(
@@ -27,6 +27,7 @@ def render_item(item):
         language=item.language,
         id=item.id,
         base_url=format(url_for("index")),
+        force_random_bucket=force_random_bucket,
     )
 
 
@@ -56,7 +57,7 @@ def random():
 def random_type(bucket):
     item = Item.select().where(Item.bucket == bucket).order_by(fn.Random()).get()
 
-    return render_item(item)
+    return render_item(item, bucket)
 
 
 @application.route("/view/<int:item_id>")
