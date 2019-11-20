@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 from models import Item, Metadata, ItemMetadata
 from peewee import fn
 from config import db
@@ -26,6 +26,7 @@ def render_item(item):
         metadata=metadata,
         language=item.language,
         id=item.id,
+        base_url=format(url_for("index")),
     )
 
 
@@ -41,7 +42,7 @@ def _db_connect():
 
 @application.route("/")
 def index():
-    return "hello"
+    return "hello juhu {}".format(url_for("index"))
 
 
 @application.route("/random")
