@@ -26,6 +26,11 @@ def get_id_for_item(item):
 def split_file_into_chunks(filepath):
     with open(filepath, "r") as input_file:
         content = input_file.read()
+
+        for bucket in BUCKET_CONF:
+            if bucket["filename_pattern"].search(content.split("\n")[0]):
+                content = "\n".join(content.split("\n")[1:])
+
         return content.split("------")
 
 
