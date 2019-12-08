@@ -5,6 +5,7 @@ from config import db
 import arrow
 import mistune
 import arrow
+import re
 
 # from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -18,11 +19,23 @@ def get_metadata(item):
     return metadata
 
 
+highlight_regex = re.compile(r"(?:\{==|\:\:)(.+)(?:==\}|\:\:)", re.DOTALL)
+
+
+def highlight(text):
+    highlight_match = highlight_regex.search(text)
+    if highlight_match:
+        replacement = '<em class="highlight">{}</em>'.format(highlight_match.group(1))
+        return text.replace(highlight_match.group(0), replacement)
+
+    return text
+
+
 def render_item(item, force_random_bucket=None):
     metadata = get_metadata(item)
     text = None
     if item.text:
-        text = markdown(item.get_typographic_text())
+        text = highlight(markdown(item.get_typographic_text()))
 
     return render_template(
         "detail.jinja2",
