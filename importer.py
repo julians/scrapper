@@ -62,8 +62,11 @@ def import_files(directory_name):
     for _, bucket in buckets.items():
         bucket["items"] = []
         for filepath in bucket["filepaths"]:
+            print(filepath)
             chunks = split_file_into_chunks(filepath)
+            print(len(chunks))
             items = parse_chunks_into_items(chunks)
+            print(len(items))
             bucket["items"] += items
 
     return buckets

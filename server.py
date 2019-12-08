@@ -5,7 +5,8 @@ from config import db
 import arrow
 import mistune
 import arrow
-from flask_httpauth import HTTPBasicAuth
+
+# from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -19,11 +20,15 @@ def get_metadata(item):
 
 def render_item(item, force_random_bucket=None):
     metadata = get_metadata(item)
+    text = None
+    if item.text:
+        text = markdown(item.get_typographic_text())
 
     return render_template(
         "detail.jinja2",
         bucket=item.bucket,
-        text=markdown(item.get_typographic_text()),
+        text=text,
+        image=item.image,
         created_at=arrow.get(item.created_at),
         metadata=metadata,
         language=item.language,
@@ -34,18 +39,18 @@ def render_item(item, force_random_bucket=None):
 
 
 application = Flask(__name__)
-auth = HTTPBasicAuth()
+# auth = HTTPBasicAuth()
 renderer = mistune.Renderer(hard_wrap=True)
 markdown = mistune.Markdown(renderer=renderer)
 
 users = {"julian": generate_password_hash("pomepomepome")}
 
 
-@auth.verify_password
-def verify_password(username, password):
-    if username in users:
-        return check_password_hash(users.get(username), password)
-    return False
+# @auth.verify_password
+# def verify_password(username, password):
+#     if username in users:
+#         return check_password_hash(users.get(username), password)
+#     return False
 
 
 @application.before_request
@@ -58,37 +63,42 @@ def index():
     return "hello juhu {}".format(url_for("index"))
 
 
-@application.route("/random")
-@auth.login_required
-def random():
-    item = Item.select().order_by(fn.Random()).get()
-
-    return render_item(item)
-
-
+@application.route("/random", defaults={"bucket": None})
 @application.route("/random/<bucket>")
-@auth.login_required
+# @auth.login_required
 def random_type(bucket):
-    item = Item.select().where(Item.bucket == bucket).order_by(fn.Random()).get()
+    if bucket:
+        item = Item.select().where(Item.bucket == bucket).order_by(fn.Random()).get()
+    else:
+        item = Item.select().order_by(fn.Random()).get()
 
     return render_item(item, bucket)
 
 
-@application.route("/view/<int:item_id>")
-@auth.login_required
-def view(item_id):
-    item = Item.select().where(Item.id == item_id).get()
+@application.route("/random-image", defaults={"bucket": None})
+@application.route("/random-image/<bucket>")
+# @auth.login_required
+def random_image(bucket):
+    if bucket:
+        item = (
+            Item.select()
+            .where(Item.bucket == bucket)
+            .where(Item.image != None)
+            .order_by(fn.Random())
+            .get()
+        )
+    else:
+        item = Item.select().where(Item.image != None).order_by(fn.Random()).get()
 
     return render_item(item)
 
 
-# @application.route("/view/<int:item_id>")
-# def view(item_id):
-#     item = Item.select().where(Item.id == item_id)
-#     metadata = get_metadata(item)
+@application.route("/view/<int:item_id>")
+# @auth.login_required
+def view(item_id):
+    item = Item.select().where(Item.id == item_id).get()
 
-#     if not len(item):
-#         return "404"
+    return render_item(item)
 
 
 @application.teardown_request

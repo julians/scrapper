@@ -24,7 +24,7 @@ PREDEFINED_TIMEZONES = [key for key, value in TIMEZONES_CONF.items()]
 datetime_strings = defaultdict(int)
 
 date_and_place_regex = re.compile(
-    r"""---
+    r"""---\n*?
 Saved on.*?((\d{2}\.\d{2}\.\d{4} \d{2}\:\d{2}.*?)
 at (.*$))""",
     re.IGNORECASE | re.MULTILINE,
@@ -36,6 +36,8 @@ old_twitter_metadata_regex = re.compile(r"^(@\w+):")
 
 is_tag_line_regex = re.compile(r"^#\w+")
 match_tags_regex = re.compile(r"#(\w+)\b")
+
+image_item_regex = re.compile(r"(?:\- image\:\s*?)(.{1,}?)$")
 
 
 def extract_date_and_place(original_chunk):
@@ -178,6 +180,16 @@ def organise_metadata(metadata):
     return organised_metadata
 
 
+def extract_image(original_string):
+    match = image_item_regex.search(original_string)
+    if match:
+        image_url = match.group(1).strip()
+        modified_string = original_string.replace(match.group(0), "").strip()
+        return {"image_url": image_url, "modified": modified_string}
+
+    return None
+
+
 def create_item_from_string(item_string):
     date_and_place = extract_date_and_place(item_string)
     if not date_and_place:
@@ -191,7 +203,16 @@ def create_item_from_string(item_string):
     else:
         text = date_and_place["modified"].strip()
 
-    language = detect(text)
+    language = None
+    image = extract_image(text)
+    if image:
+        text = image["modified"]
+        image = image["image_url"]
+
+    if text and len(text):
+        language = detect(text)
+    else:
+        text = None
 
     item_arguments = {
         "text": text,
@@ -199,6 +220,7 @@ def create_item_from_string(item_string):
         "place": date_and_place["place"],
         "metadata": metadata,
         "language": language,
+        "image": image,
     }
     return item_arguments
     # return Item(**item_arguments)

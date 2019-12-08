@@ -58,20 +58,27 @@
         margin-top: 0;
         color: #999;
     }
-    .content {
+    .content-container {
         font-size: 1.5rem;
         background: white;
         border-radius: 5px;
-        padding: 1px 1em;
         margin: 0 -1em;
+        overflow: hidden;
     }
-    .content--quote {
+    .image-content {
+        display: block;
+        max-width: 100%;
+    }
+    .text-content {
+        padding: 1px 1em;
+    }
+    .text-content--quote {
         font-style: italic;
     }
-    .content--poem {
+    .text-content--poem {
         font-size: 1.25rem;
     }
-    .content--poem h1 em:first-child {
+    .text-content--poem h1 em:first-child {
         color: #aaa;
     }
     .meta-items {
@@ -129,8 +136,15 @@
                 <br>
                 {{ created_at.format("H:mm", locale="de") }} Uhr
             </p>
-            <div class="content content--{{ bucket }}">
-                {{ text }}
+            <div class="content-container">
+                {% if image %}
+                    <img class="image-content" src="{{ image }}" />
+                {% endif %}
+                {% if text %}
+                    <div class="text-content text-content--{{ bucket }}">
+                        {{ text }}
+                    </div>
+                {% endif %}
             </div>
             {% if metadata %}
                 <ul class="meta-items">

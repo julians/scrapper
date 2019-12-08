@@ -25,10 +25,15 @@ BUCKETS = [
         "filename_pattern": re.compile("design notes? \d{4}-\d{2}", re.IGNORECASE),
         "id": "design-notes",
     },
+    {"filename_pattern": re.compile("arts? \d{4}-\d{2}", re.IGNORECASE), "id": "arts"},
+    {
+        "filename_pattern": re.compile("photos? \d{4}-\d{2}", re.IGNORECASE),
+        "id": "photos",
+    },
 ]
 
 PLACES = {"WG": [52.396301, 13.032333]}
 
-TIMEZONES = {"CDT": "CST6CDT"}
+TIMEZONES = {"CDT": "CST6CDT", "MESZ": "CEST", "MEZ": "CET"}
 
 db = SqliteDatabase("scraps.db")

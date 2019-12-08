@@ -41,7 +41,8 @@ class Metadata(BaseModel):
 
 
 class Item(BaseModel):
-    text = TextField()
+    text = TextField(null=True)
+    image = CharField(null=True)
     created_at = DateTimeField(null=True)
     lat = FloatField(null=True)
     lng = FloatField(null=True)
@@ -49,9 +50,13 @@ class Item(BaseModel):
     bucket = CharField(max_length=16, null=True)
 
     def get_typographic_text(self):
-        typographic_language = typographic_languages.get(self.language, self.language)
-        text = fix_typography(self.text, language=typographic_language)
-        return text
+        if self.text and len(self.text):
+            typographic_language = typographic_languages.get(
+                self.language, self.language
+            )
+            text = fix_typography(self.text, language=typographic_language)
+            return text
+        return None
 
 
 class ItemMetadata(BaseModel):
