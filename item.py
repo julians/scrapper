@@ -6,6 +6,7 @@ from collections import defaultdict
 import arrow
 from urllib.parse import urlparse
 from langdetect import detect
+import hashlib
 
 from config import PLACES as PLACES_CONF
 from config import TIMEZONES as TIMEZONES_CONF
@@ -190,6 +191,18 @@ def extract_image(original_string):
     return None
 
 
+def get_id_for_item(item):
+    hashable_content = ""
+    if item["image"]:
+        hashable_content = item["image"]
+    elif item["text"]:
+        hashable_content = item["text"]
+
+    hashable_content = "{}{}".format(item["datetime"].isoformat(), hashable_content)
+
+    return hashlib.sha1(hashable_content.encode("utf-8")).hexdigest()
+
+
 def create_item_from_string(item_string):
     date_and_place = extract_date_and_place(item_string)
     if not date_and_place:
@@ -222,5 +235,10 @@ def create_item_from_string(item_string):
         "language": language,
         "image": image,
     }
+
+    hashid = get_id_for_item(item_arguments)
+    # print(uid)
+    item_arguments["hashid"] = hashid
+
     return item_arguments
     # return Item(**item_arguments)

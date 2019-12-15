@@ -29,6 +29,7 @@ def save_item_to_db(item, bucket=None):
         lat=lat,
         lng=lng,
         language=item["language"],
+        hashid=item["hashid"],
         bucket=bucket,
     )
 
@@ -55,6 +56,7 @@ def file_import(directory_name):
     for bucket in buckets.values():
         bucket_id = bucket["id"][:-1]
         for item in bucket["items"]:
+            # print(item["datetime"], item["text"], item["image"])
             save_item_to_db(item, bucket=bucket_id)
 
     db.close()

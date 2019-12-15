@@ -3,7 +3,6 @@
 
 import os
 import glob
-import hashlib
 import re
 from collections import defaultdict
 
@@ -17,10 +16,6 @@ def match_to_bucket(filepath):
             return bucket["id"]
 
     return False
-
-
-def get_id_for_item(item):
-    hashlib.sha1(item["date"]).hexdigest()[:12]
 
 
 def split_file_into_chunks(filepath):

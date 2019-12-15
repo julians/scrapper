@@ -46,6 +46,8 @@ def render_item(item, force_random_bucket=None):
         metadata=metadata,
         language=item.language,
         id=item.id,
+        hashid=item.hashid,
+        short_hashid=item.hashid[:7],
         base_url=format(url_for("index")),
         force_random_bucket=force_random_bucket,
     )
@@ -106,10 +108,10 @@ def random_image(bucket):
     return render_item(item)
 
 
-@application.route("/view/<int:item_id>")
+@application.route("/view/<string:item_hashid>")
 # @auth.login_required
-def view(item_id):
-    item = Item.select().where(Item.id == item_id).get()
+def view(item_hashid):
+    item = Item.select().where(Item.hashid == item_hashid).get()
 
     return render_item(item)
 
