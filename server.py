@@ -10,6 +10,8 @@ import re
 # from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from config import RELATIVE_STATIC_FILE_PATH
+
 
 def get_metadata(item):
     metadata_query = (
@@ -37,11 +39,18 @@ def render_item(item, force_random_bucket=None):
     if item.text:
         text = highlight(markdown(item.get_typographic_text()))
 
+    image = None
+    if item.image:
+        if item.image.startswith("http"):
+            image = item.image
+        else:
+            image = "/static/{}".format(item.image)
+
     return render_template(
         "detail.jinja2",
         bucket=item.bucket,
         text=text,
-        image=item.image,
+        image=image,
         created_at=arrow.get(item.created_at),
         metadata=metadata,
         language=item.language,
@@ -53,7 +62,7 @@ def render_item(item, force_random_bucket=None):
     )
 
 
-application = Flask(__name__)
+application = Flask(__name__, static_folder="static")
 # auth = HTTPBasicAuth()
 renderer = mistune.Renderer(hard_wrap=True)
 markdown = mistune.Markdown(renderer=renderer)

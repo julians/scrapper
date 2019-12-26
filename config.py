@@ -3,6 +3,8 @@
 
 import re
 from peewee import SqliteDatabase
+import sys
+from os import path
 
 BUCKETS = [
     {
@@ -29,7 +31,13 @@ BUCKETS = [
     {
         "filename_pattern": re.compile("photos? \d{4}-\d{2}", re.IGNORECASE),
         "id": "photos",
+        "aliases": ["fotos", "schöne bilder"],
     },
+    {
+        "filename_pattern": re.compile("comics? \d{4}-\d{2}", re.IGNORECASE),
+        "id": "comics",
+    },
+    {"filename_pattern": re.compile("art? \d{4}-\d{2}", re.IGNORECASE), "id": "art"},
 ]
 
 PLACES = {"WG": [52.396301, 13.032333]}
@@ -37,3 +45,6 @@ PLACES = {"WG": [52.396301, 13.032333]}
 TIMEZONES = {"CDT": "CST6CDT", "MESZ": "CEST", "MEZ": "CET"}
 
 db = SqliteDatabase("scraps.db")
+
+RELATIVE_STATIC_FILE_PATH = "static"
+STATIC_FILE_PATH = path.join(sys.path[0], RELATIVE_STATIC_FILE_PATH)

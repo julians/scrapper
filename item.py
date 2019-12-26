@@ -203,6 +203,24 @@ def get_id_for_item(item):
     return hashlib.sha1(hashable_content.encode("utf-8")).hexdigest()
 
 
+def create_item(
+    datetime, metadata=None, text=None, place=None, language=None, image=None
+):
+    item_arguments = {
+        "text": text,
+        "datetime": datetime,
+        "place": place,
+        "metadata": metadata,
+        "language": language,
+        "image": image,
+    }
+
+    hashid = get_id_for_item(item_arguments)
+    item_arguments["hashid"] = hashid
+
+    return item_arguments
+
+
 def create_item_from_string(item_string):
     date_and_place = extract_date_and_place(item_string)
     if not date_and_place:
@@ -237,8 +255,6 @@ def create_item_from_string(item_string):
     }
 
     hashid = get_id_for_item(item_arguments)
-    # print(uid)
     item_arguments["hashid"] = hashid
 
     return item_arguments
-    # return Item(**item_arguments)
