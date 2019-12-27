@@ -44,7 +44,7 @@ def parse_item(possible_item):
         modification_date = datetime.datetime.utcfromtimestamp(mod_seconds)
 
         hash_appendix = get_hash_for_file(file_path)
-        new_file_name = "{}-{}.{}".format(hash_appendix, filename[:100], extension)
+        new_file_name = "{}.{}".format(hash_appendix, extension)
 
         im = Image.open(file_path)
         im.thumbnail((1024, 1024))

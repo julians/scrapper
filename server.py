@@ -6,6 +6,7 @@ import arrow
 import mistune
 import arrow
 import re
+import os
 
 # from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -44,7 +45,7 @@ def render_item(item, force_random_bucket=None):
         if item.image.startswith("http"):
             image = item.image
         else:
-            image = "/static/{}".format(item.image)
+            image = "/{}/{}".format(RELATIVE_STATIC_FILE_PATH, item.image)
 
     return render_template(
         "detail.jinja2",

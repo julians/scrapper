@@ -31,7 +31,8 @@ def split_file_into_chunks(filepath):
 
 def get_files_by_bucket(directory_name):
     buckets = {
-        bucket["id"]: {"id": bucket["id"], "filepaths": []} for bucket in BUCKET_CONF
+        bucket["id"]: {"id": bucket["id"], "filepaths": [], "items": []}
+        for bucket in BUCKET_CONF
     }
     for filepath in glob.iglob(
         os.path.join(directory_name, "**/*.txt"), recursive=True
@@ -55,7 +56,6 @@ def parse_chunks_into_items(chunks):
 def import_files(directory_name):
     buckets = get_files_by_bucket(directory_name)
     for _, bucket in buckets.items():
-        bucket["items"] = []
         for filepath in bucket["filepaths"]:
             print(filepath)
             chunks = split_file_into_chunks(filepath)

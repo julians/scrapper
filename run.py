@@ -3,6 +3,7 @@
 
 import click
 import importer
+import together_importer
 import json
 import datetime
 from itertools import chain
@@ -43,11 +44,15 @@ def save_item_to_db(item, bucket=None):
 @click.argument("directory_name")
 def file_import(directory_name):
     buckets = importer.import_files(directory_name)
+    together_buckets = together_importer.import_files(directory_name)
 
-    # with open("test_out.json", "w") as test_output_file:
-    #     json.dump(buckets, test_output_file, default=date_handler, indent=4)
+    for _, bucket in together_buckets.items():
+        buckets[bucket["id"]]["items"] += bucket["items"]
 
-    # all_items = list(chain.from_iterable([x["items"] for x in buckets.values()]))
+    # # with open("test_out.json", "w") as test_output_file:
+    # #     json.dump(buckets, test_output_file, default=date_handler, indent=4)
+
+    # # all_items = list(chain.from_iterable([x["items"] for x in buckets.values()]))
 
     db.connect()
     db.drop_tables([Item, Metadata, ItemMetadata])

@@ -4,7 +4,11 @@
 import re
 from peewee import SqliteDatabase
 import sys
-from os import path
+from os import path, environ
+
+env = environ.get("ENVIRONMENT", "development")
+
+IS_PRODUCTION = env == "production"
 
 BUCKETS = [
     {
@@ -46,5 +50,5 @@ TIMEZONES = {"CDT": "CST6CDT", "MESZ": "CEST", "MEZ": "CET"}
 
 db = SqliteDatabase("scraps.db")
 
-RELATIVE_STATIC_FILE_PATH = "static"
+RELATIVE_STATIC_FILE_PATH = "static-scrapper" if IS_PRODUCTION else "static"
 STATIC_FILE_PATH = path.join(sys.path[0], RELATIVE_STATIC_FILE_PATH)
