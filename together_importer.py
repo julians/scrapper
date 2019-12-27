@@ -47,7 +47,7 @@ def parse_item(possible_item):
         new_file_name = "{}.{}".format(hash_appendix, extension)
 
         im = Image.open(file_path)
-        im.thumbnail((1024, 1024))
+        im.thumbnail((1024, 2048))
         im.save(os.path.join(STATIC_FILE_PATH, new_file_name))
 
         metadata = None
