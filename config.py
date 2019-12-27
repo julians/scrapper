@@ -41,7 +41,11 @@ BUCKETS = [
         "filename_pattern": re.compile("comics? \d{4}-\d{2}", re.IGNORECASE),
         "id": "comics",
     },
-    {"filename_pattern": re.compile("art? \d{4}-\d{2}", re.IGNORECASE), "id": "art"},
+    {
+        "filename_pattern": re.compile("art? \d{4}-\d{2}", re.IGNORECASE),
+        "id": "arts",
+        "aliases": ["art"],
+    },
 ]
 
 PLACES = {"WG": [52.396301, 13.032333]}
