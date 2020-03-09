@@ -27,6 +27,7 @@ def save_item_to_db(item, bucket=None):
         text=item["text"],
         image=item["image"],
         created_at=item["datetime"],
+        timezone=item["timezone"],
         lat=lat,
         lng=lng,
         language=item["language"],

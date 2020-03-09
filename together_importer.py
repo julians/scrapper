@@ -67,11 +67,15 @@ def parse_item(possible_item):
         item = {
             "metadata": metadata,
             "datetime": modification_date,
+            "timezone": "UTC",
             "image": new_file_name,
         }
 
         return create_item(
-            metadata=item["metadata"], datetime=item["datetime"], image=item["image"]
+            metadata=item["metadata"],
+            datetime=item["datetime"],
+            timezone=item["timezone"],
+            image=item["image"],
         )
 
     return None

@@ -55,8 +55,9 @@ def extract_date_and_place(original_chunk):
     modified_chunk = original_chunk.replace(date_and_place_match.group(0), "").strip()
 
     return {
-        "datetime": datetime,
+        "datetime": datetime.datetime,
         "place": place,
+        "timezone": datetime.format("ZZZ"),
         "original": original_chunk,
         "modified": modified_chunk,
     }
@@ -77,7 +78,7 @@ def parse_datetime(datetime_string):
 
     datetime = datetime.replace(tzinfo=timezone_string)
 
-    return datetime.datetime
+    return datetime
 
 
 def parse_place(place_string):
@@ -204,11 +205,18 @@ def get_id_for_item(item):
 
 
 def create_item(
-    datetime, metadata=None, text=None, place=None, language=None, image=None
+    datetime,
+    timezone=None,
+    metadata=None,
+    text=None,
+    place=None,
+    language=None,
+    image=None,
 ):
     item_arguments = {
         "text": text,
         "datetime": datetime,
+        "timezone": timezone,
         "place": place,
         "metadata": metadata,
         "language": language,
@@ -248,6 +256,7 @@ def create_item_from_string(item_string):
     item_arguments = {
         "text": text,
         "datetime": date_and_place["datetime"],
+        "timezone": date_and_place["timezone"],
         "place": date_and_place["place"],
         "metadata": metadata,
         "language": language,
