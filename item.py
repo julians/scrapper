@@ -52,7 +52,7 @@ def extract_date_and_place(original_chunk):
     place = parse_place(place_string)
     datetime = parse_datetime(datetime_string)
 
-    modified_chunk = original_chunk.replace(date_and_place_match.group(0), "").strip()
+    modified_chunk = original_chunk.replace(date_and_place_match.group(0), "")
 
     return {
         "datetime": datetime.datetime,
@@ -247,6 +247,8 @@ def create_item_from_string(item_string):
     if image:
         text = image["modified"]
         image = image["image_url"]
+
+    text = text.strip()
 
     if text and len(text):
         language = detect(text)
