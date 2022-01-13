@@ -15,7 +15,7 @@ MarkupSafe==1.1.1
 mccabe==0.6.1
 mistune==0.8.3
 peewee==3.6.4
-Pillow==8.2.0
+Pillow==9.0.0
 pylint==2.1.0
 python-dateutil==2.6.1
 six==1.11.0
